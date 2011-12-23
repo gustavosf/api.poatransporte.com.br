@@ -1,0 +1,8 @@
+*~
+*.bak
+desktop.ini
+Thumbs.db
+.DS_STORE
+
+*.sublime-project
+*.sublime-workspace
