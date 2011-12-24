@@ -12,8 +12,8 @@ class PoaTransporteTestCase extends PHPUnit_Framework_TestCase {
 
 		$this->assertEquals(get_class($buses), 'PoaTransporte_Collection');
 		$this->assertEquals(get_class($lotacoes), 'PoaTransporte_Collection');
-		$this->assertGreatherThan(1, count($buses));
-		$this->assertGreatherThan(1, count($lotacoes));
+		$this->assertGreaterThan(1, count($buses));
+		$this->assertGreaterThan(1, count($lotacoes));
 		$this->assertEquals(get_class($buses[0]), 'PoaTransporte_Unit');
 		$this->assertEquals(get_class($lotacoes[0]), 'PoaTransporte_Unit');
 	}

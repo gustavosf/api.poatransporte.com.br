@@ -37,7 +37,7 @@ class PoaTransporte_Collection implements ArrayAccess, Countable, IteratorAggreg
 
 	private function load_data($type)
 	{
-		if ( ! in_array($type, array('onibus', 'lotacao')))
+		if ( ! in_array($type, array('onibus', 'lotacoes')))
 		{
 			throw new Exception('Invalid request');
 		}
