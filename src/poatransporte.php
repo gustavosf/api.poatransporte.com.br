@@ -11,6 +11,16 @@ class PoaTransporte {
 		}
 		return $collection;
 	}
+
+	public static function lotacoes()
+	{
+		static $collection;
+		if ( ! is_object($collection))
+		{
+			$collection = new PoaTransporte_Collection('lotacoes');
+		}
+		return $collection;
+	}
 	
 }
 
@@ -27,7 +37,7 @@ class PoaTransporte_Collection implements ArrayAccess, Countable, IteratorAggreg
 
 	private function load_data($type)
 	{
-		if ( ! in_array($type, array('onibus', 'lotacao')))
+		if ( ! in_array($type, array('onibus', 'lotacoes')))
 		{
 			throw new Exception('Invalid request');
 		}
