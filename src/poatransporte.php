@@ -34,6 +34,20 @@ class PoaTransporte {
 		}
 		return $collection;
 	}
+
+	/**
+	 * Método estático que retorna a listagem das paradas de ônibus/lotação
+	 * @return  PoaTransporte_Collection
+	 */
+	public static function paradas()
+	{
+		static $collection;
+		if ( ! is_object($collection))
+		{
+			$collection = new PoaTransporte_Collection('paradas');
+		}
+		return $collection;
+	}
 	
 }
 
@@ -60,12 +74,21 @@ class PoaTransporte_Collection implements ArrayAccess, Countable, IteratorAggreg
 	 */
 	private function load_data($type)
 	{
-		if ( ! in_array($type, array('onibus', 'lotacoes')))
+		if ( ! in_array($type, array('onibus', 'lotacoes', 'paradas')))
 		{
 			throw new Exception('Invalid request');
 		}
 
-		$request_uri = PoaTransporte::$facade.'?a=nc&p=%&t='.substr($type, 0, 1);
+		$type = substr($type, 0, 1);
+		if ($type === 'p')
+		{
+			$max_coords = '((-29.933136, -51.332762), (-30.250385, -50.979826))';
+			$request_uri = PoaTransporte::$facade.'?a=tp&p='.$max_coords;
+		}
+		else
+		{
+			$request_uri = PoaTransporte::$facade.'?a=nc&p=%&t='.$type;
+		}
 		$request = file_get_contents($request_uri);
 		$data = json_decode($request);
 
