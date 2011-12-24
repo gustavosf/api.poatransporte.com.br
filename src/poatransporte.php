@@ -112,8 +112,8 @@ class PoaTransporte_Unit {
 	{
 		$request_uri = PoaTransporte::$facade.'?a=il&p='.$this->id;
 		$request = file_get_contents($request_uri);
-		$route = json_decode($request);
-		unset($route->codigo, $route->idlinha, $route->nome);
+		$route = get_object_vars(json_decode($request));
+		unset($route['codigo'], $route['idlinha'], $route['nome']);
 
 		$this->route = $route;
 		return $route;
