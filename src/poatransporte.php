@@ -11,6 +11,16 @@ class PoaTransporte {
 		}
 		return $collection;
 	}
+
+	public static function lotacoes()
+	{
+		static $collection;
+		if ( ! is_object($collection))
+		{
+			$collection = new PoaTransporte_Collection('lotacoes');
+		}
+		return $collection;
+	}
 	
 }
 
