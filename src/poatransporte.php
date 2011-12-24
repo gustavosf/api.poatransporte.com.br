@@ -16,7 +16,8 @@ class PoaTransporte {
 		static $collection;
 		if ( ! is_object($collection))
 		{
-			$collection = new PoaTransporte_Collection('onibus');
+			$data = self::load_data('onibus');
+			$collection = new PoaTransporte_Collection($data);
 		}
 		return $collection;
 	}
@@ -30,7 +31,8 @@ class PoaTransporte {
 		static $collection;
 		if ( ! is_object($collection))
 		{
-			$collection = new PoaTransporte_Collection('lotacoes');
+			$data = self::load_data('lotacoes');
+			$collection = new PoaTransporte_Collection($data);
 		}
 		return $collection;
 	}
@@ -44,35 +46,18 @@ class PoaTransporte {
 		static $collection;
 		if ( ! is_object($collection))
 		{
-			$collection = new PoaTransporte_Collection('paradas');
+			$data = self::load_data('paradas');
+			$collection = new PoaTransporte_Collection($data);
 		}
 		return $collection;
-	}
-	
-}
-
-class PoaTransporte_Collection implements ArrayAccess, Countable, IteratorAggregate {
-	
-	/**
-	 * Armazena a lista de unidades de transporte
-	 */
-	public $collection;
-
-	/**
-	 * Retorna uma coleção de unidades de transporte, carregadas do PoaTransporte
-	 */
-	public function __construct($type)
-	{
-		$data = $this->load_data($type);
-		$this->collection = $data;
 	}
 
 	/**
 	 * Carrega os dados do resource
-	 * @see     PoaTransporte::$facade
+	 * @see     self::$facade
 	 * @return  array
 	 */
-	private function load_data($type)
+	private static function load_data($type)
 	{
 		if ( ! in_array($type, array('onibus', 'lotacoes', 'paradas')))
 		{
@@ -83,11 +68,11 @@ class PoaTransporte_Collection implements ArrayAccess, Countable, IteratorAggreg
 		if ($type === 'p')
 		{
 			$max_coords = '((-30.14296222668432,%20-51.87917968750003),%20(-29.79200328961529,%20-50.56082031250003))))';
-			$request_uri = PoaTransporte::$facade.'?a=tp&p='.$max_coords;
+			$request_uri = self::$facade.'?a=tp&p='.$max_coords;
 		}
 		else
 		{
-			$request_uri = PoaTransporte::$facade.'?a=nc&p=%&t='.$type;
+			$request_uri = self::$facade.'?a=nc&p=%&t='.$type;
 		}
 		$request = file_get_contents($request_uri);
 		$data = json_decode($request);
@@ -100,8 +85,25 @@ class PoaTransporte_Collection implements ArrayAccess, Countable, IteratorAggreg
 
 		return $data;
 	}
+	
+}
+
+class PoaTransporte_Collection implements ArrayAccess, Countable, IteratorAggregate {
+	
+	/**
+	 * Armazena a lista de unidades de transporte
+	 */
+	public $collection;
 
 	/**
+	 * Retorna uma coleção de unidades de transporte
+	 */
+	public function __construct($data)
+	{
+		$this->collection = $data;
+	}
+
+		/**
 	 * Retorna o primeiro elemento da coleção
 	 * @return  object
 	 */
@@ -118,6 +120,57 @@ class PoaTransporte_Collection implements ArrayAccess, Countable, IteratorAggreg
 	{
 		return array_pop($this->collection);
 	}
+
+	/**
+	 * Procura um objeto na coleção
+	 * @return  object
+	 */
+	public function find($id = null)
+	{
+		if ($id === null) 
+		{
+			$this->finder['where'] = array();
+			return $this;
+		}
+		else
+		{
+			
+		}
+	}
+
+	public function where($field, $comparator, $value)
+	{
+		$comparators = array('>', '>=', '<', '<=', '=', '!=');
+		if ( ! in_array($comparator, $comparators))
+		{
+			throw new Exception('Invalid value comparator');
+		}
+		if ( ! $this->finder)
+		{
+			throw new Exception('You must use the method "find" before "where"');
+		}
+
+		$this->finder['where'][] = (object)array(
+			'field' => $field,
+			'comparator' => $comparator,
+			'value' => $value
+		);
+
+		return $this;
+	}
+
+	protected function finder()
+	{
+		$return = array();
+		foreach ($this->collection as $key => $item)
+		{
+			foreach ($this->finder['where'] as $where)
+			{
+				if ($item->{$where->value} )
+			}
+		}
+	}
+	
 
 	/* Os métodos abaixo são implementações simples de ArrayAccess,
 	   Countable e IteratorAggregate */
