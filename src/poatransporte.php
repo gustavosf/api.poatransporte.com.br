@@ -2,6 +2,8 @@
 
 class PoaTransporte {
 
+	public static $facade = 'http://www.poatransporte.com.br/php/facades/process.php';
+
 	public static function onibus()
 	{
 		static $collection;
@@ -27,7 +29,6 @@ class PoaTransporte {
 class PoaTransporte_Collection implements ArrayAccess, Countable, IteratorAggregate {
 	
 	private $collection;
-	private $facade = 'http://www.poatransporte.com.br/php/facades/process.php';
 
 	public function __construct($type)
 	{
@@ -42,7 +43,7 @@ class PoaTransporte_Collection implements ArrayAccess, Countable, IteratorAggreg
 			throw new Exception('Invalid request');
 		}
 
-		$request_uri = $this->facade.'?a=nc&p=%&t='.substr($type, 0, 1);
+		$request_uri = PoaTransporte::$facade.'?a=nc&p=%&t='.substr($type, 0, 1);
 		$request = file_get_contents($request_uri);
 		$data = json_decode($request);
 
@@ -90,6 +91,7 @@ class PoaTransporte_Collection implements ArrayAccess, Countable, IteratorAggreg
 class PoaTransporte_Unit {
 	
 	private $data;
+	private $route;
 
 	public function __construct($data)
 	{
@@ -99,6 +101,22 @@ class PoaTransporte_Unit {
 	public function __get($param)
 	{
 		return trim($this->data->{$param});
+	}
+	
+	public function route()
+	{
+		return $this->route ?: $this->load_route();
+	}
+
+	private function load_route()
+	{
+		$request_uri = PoaTransporte::$facade.'?a=il&p='.$this->id;
+		$request = file_get_contents($request_uri);
+		$route = json_decode($request);
+		unset($route->codigo, $route->idlinha, $route->nome);
+
+		$this->route = $route;
+		return $route;
 	}
 
 }

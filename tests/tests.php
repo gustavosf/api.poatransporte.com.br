@@ -4,31 +4,32 @@ require dirname(__FILE__).'/../src/poatransporte.php';
 
 class PoaTransporteTestCase extends PHPUnit_Framework_TestCase {
 	
+	public function testDataLoad()
+	{
+		$this->buses = PoaTransporte::onibus();
+		$this->lotacoes = PoaTransporte::lotacoes();
+	}
+
 	public function testCollections()
 	{
-		$buses = PoaTransporte::onibus();
-		$lotacoes = PoaTransporte::lotacoes();
+		$this->assertEquals(get_class($this->buses), 'PoaTransporte_Collection');
+		$this->assertGreaterThan(1, count($this->buses));
+		$this->assertEquals(get_class($this->buses[0]), 'PoaTransporte_Unit');
 
-
-		$this->assertEquals(get_class($buses), 'PoaTransporte_Collection');
-		$this->assertEquals(get_class($lotacoes), 'PoaTransporte_Collection');
-		$this->assertGreaterThan(1, count($buses));
-		$this->assertGreaterThan(1, count($lotacoes));
-		$this->assertEquals(get_class($buses[0]), 'PoaTransporte_Unit');
-		$this->assertEquals(get_class($lotacoes[0]), 'PoaTransporte_Unit');
+		$this->assertEquals(get_class($this->lotacoes), 'PoaTransporte_Collection');
+		$this->assertGreaterThan(1, count($this->lotacoes));
+		$this->assertEquals(get_class($this->lotacoes[0]), 'PoaTransporte_Unit');
 	}
 
 	public function testUnitData()
 	{
-		$buses = PoaTransporte::onibus();
-		$bus = $buses[0];
+		$bus   = $this->buses[0];
 		$this->assertNotNull(@$bus->nome);
 		$this->assertNotNull(@$bus->codigo);
 
-		$buses = PoaTransporte::lotacoes();
-		$bus = $buses[0];
-		$this->assertNotNull(@$bus->nome);
-		$this->assertNotNull(@$bus->codigo);
+		$lotacao = $this->lotacoes[0];
+		$this->assertNotNull(@$lotacao->nome);
+		$this->assertNotNull(@$lotacao->codigo);
 	}
 
 }
