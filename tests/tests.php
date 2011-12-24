@@ -1,16 +1,16 @@
 <?php
 
+require dirname(__FILE__).'/../src/poatransporte.php';
+
 class PoaTransporteTestCase extends PHPUnit_Framework_TestCase {
 	
 	public function testBusList()
 	{
-		$api = new PoaTransporte();
-		
-		$buses = $api->get_lists()->bus;
-		$this->assertEquals(gettype($buses), 'array');
-		
-		$this->assertEquals(gettype($bus->nome), 'object');
-		$this->assertEquals(get_class($bus->nome), 'PoaBusTransporte_Bus');
+		$buses = PoaTransporte::onibus();
+		$bus = $buses[0];
+
+		$this->assertEquals(get_class($buses), 'PoaTransporte_Collection');
+		$this->assertEquals(get_class($bus), 'PoaTransporte_Unit');
 		$this->assertObjectHasAttribute('nome', $bus);
 		$this->assertObjectHasAttribute('codigo', $bus);
 	}
