@@ -56,7 +56,7 @@ class PoaTransporte_Collection implements ArrayAccess, Countable, IteratorAggreg
 	/**
 	 * Armazena a lista de unidades de transporte
 	 */
-	private $collection;
+	public $collection;
 
 	/**
 	 * Retorna uma coleção de unidades de transporte, carregadas do PoaTransporte
@@ -64,7 +64,7 @@ class PoaTransporte_Collection implements ArrayAccess, Countable, IteratorAggreg
 	public function __construct($type)
 	{
 		$data = $this->load_data($type);
-		$this->collection = new ArrayObject($data, ArrayObject::ARRAY_AS_PROPS);
+		$this->collection = $data;
 	}
 
 	/**
@@ -101,6 +101,24 @@ class PoaTransporte_Collection implements ArrayAccess, Countable, IteratorAggreg
 		return $data;
 	}
 
+	/**
+	 * Retorna o primeiro elemento da coleção
+	 * @return  object
+	 */
+	public function first()
+	{
+		return array_shift($this->collection);
+	}
+
+	/**
+	 * Retorna o último elemento da coleção
+	 * @return  object
+	 */
+	public function last()
+	{
+		return array_pop($this->collection);
+	}
+
 	/* Os métodos abaixo são implementações simples de ArrayAccess,
 	   Countable e IteratorAggregate */
 	   
@@ -132,7 +150,7 @@ class PoaTransporte_Collection implements ArrayAccess, Countable, IteratorAggreg
 	}
 
 	public function getIterator() {
-		return $this->collection->getIterator();
+		return new ArrayIterator($this->collection);
 	}
 
 }
