@@ -122,53 +122,61 @@ class PoaTransporte_Collection implements ArrayAccess, Countable, IteratorAggreg
 	}
 
 	/**
-	 * Procura um objeto na coleção
+	 * Inicia a procura de um objeto na coleção, ou retorna o objeto com
+	 * o id pesquisado
+	 * @param   mixed   usar um tipo básico (string ou int)
 	 * @return  object
 	 */
 	public function find($id = null)
 	{
-		if ($id === null) 
+		$this->finder = array();
+		if ($id !== null)
 		{
-			$this->finder['where'] = array();
-			return $this;
+			return $this->where('id', '^'.$id.'$')->execute();
 		}
 		else
 		{
-			
+			return $this;
 		}
 	}
 
-	public function where($field, $comparator, $value)
+	/**
+	 * Configura uma pesquisa por campo e valor
+	 * Suporta apenas comparação por regex
+	 * Para pesquisar por valor exato, utilizar ^VALOR$
+	 * @param   string  atributo a ser pesqusiado
+	 * @param   string  regex a ser utilizada (sem '/')
+	 * @return  PoaTransporte_Collection  $this
+	 */
+	public function where($field, $value)
 	{
-		$comparators = array('>', '>=', '<', '<=', '=', '!=');
-		if ( ! in_array($comparator, $comparators))
-		{
-			throw new Exception('Invalid value comparator');
-		}
-		if ( ! $this->finder)
-		{
-			throw new Exception('You must use the method "find" before "where"');
-		}
-
-		$this->finder['where'][] = (object)array(
+		$this->finder[] = (object)array(
 			'field' => $field,
-			'comparator' => $comparator,
 			'value' => $value
 		);
-
 		return $this;
 	}
 
-	protected function finder()
+	/**
+	 * Executa a consulta e retorna uma coleção com os objetos encontrados
+	 * @return  PoaTransporte_Collection
+	 */
+	public function execute()
 	{
 		$return = array();
 		foreach ($this->collection as $key => $item)
 		{
-			foreach ($this->finder['where'] as $where)
+			$found = true;
+			foreach ($this->finder as $where)
 			{
-				if ($item->{$where->value} )
+				$found = ($found and preg_match('/'.$where->value.'/i', $item->{$where->field}));
+			}
+			if ($found)
+			{
+				array_push($return, $item);
 			}
 		}
+		return new PoaTransporte_Collection($return);
 	}
 	
 
