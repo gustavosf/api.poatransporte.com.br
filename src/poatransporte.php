@@ -91,10 +91,11 @@ class PoaTransporte_Collection implements ArrayAccess, Countable, IteratorAggreg
 		}
 		$request = file_get_contents($request_uri);
 		$data = json_decode($request);
+		$class = 'PoaTransporte_'.($type === 'p' ? 'Stop' : 'Unit');
 
 		foreach ($data as $key => $unit)
 		{
-			$data[$key] = new PoaTransporte_Unit($unit);
+			$data[$key] = new $class($unit);
 		}
 
 		return $data;
@@ -194,4 +195,32 @@ class PoaTransporte_Unit {
 		return $route;
 	}
 
+}
+
+class PoaTransporte_Stop {
+	
+	/**
+	 * Armazena os dados básicos da unidade de transporte
+	 */
+	private $data;
+
+	/**
+	 * Retorna o objeto que representa uma unidade de transporte.
+	 * Contém os dados básicos como nome, código, id e rota
+	 */
+	public function __construct($data)
+	{
+		$this->data = $data;
+	}
+
+	/**
+	 * Método mágico para dar acesso aos dados do objeto
+	 * @return  mixed
+	 */
+	public function __get($param)
+	{
+		$param = $this->data->{$param};
+		return is_string($param) ? trim($param) : $param;
+	}
+	
 }

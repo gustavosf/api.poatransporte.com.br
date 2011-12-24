@@ -30,6 +30,10 @@ class PoaTransporteTestCase extends PHPUnit_Framework_TestCase {
 		$this->assertEquals(get_class($this->lotacoes), 'PoaTransporte_Collection');
 		$this->assertGreaterThan(1, count($this->lotacoes));
 		$this->assertEquals(get_class($this->lotacoes[0]), 'PoaTransporte_Unit');
+
+		$this->assertEquals(get_class($this->stops), 'PoaTransporte_Collection');
+		$this->assertGreaterThan(1, count($this->stops));
+		$this->assertEquals(get_class($this->stops[0]), 'PoaTransporte_Stop');
 	}
 
 	public function testUnitData()
@@ -56,9 +60,15 @@ class PoaTransporteTestCase extends PHPUnit_Framework_TestCase {
 
 	public function testUnitStops()
 	{
-		$this->assertGreaterThan(1, count($this->stops));
-
 		$stop = array_pop($this->stops);
+
+		$this->assertNotNull(@$stop->codigo);
+		$this->assertNotNull(@$stop->latitude);
+		$this->assertNotNull(@$stop->longitude);
+		$this->assertNotNull(@$stop->terminal);
+		$this->assertNotNull(@$stop->linhas);
+		$this->assertType('array', $stop->linhas);
+
 		$this->assertObjectHasAttribute('codigo', $stop);
 		$this->assertObjectHasAttribute('latitude', $stop);
 		$this->assertObjectHasAttribute('longitude', $stop);
