@@ -34,6 +34,20 @@ class PoaTransporte {
 		}
 		return $collection;
 	}
+
+	/**
+	 * Método estático que retorna a listagem das paradas de ônibus/lotação
+	 * @return  PoaTransporte_Collection
+	 */
+	public static function paradas()
+	{
+		static $collection;
+		if ( ! is_object($collection))
+		{
+			$collection = new PoaTransporte_Collection('paradas');
+		}
+		return $collection;
+	}
 	
 }
 
@@ -60,18 +74,28 @@ class PoaTransporte_Collection implements ArrayAccess, Countable, IteratorAggreg
 	 */
 	private function load_data($type)
 	{
-		if ( ! in_array($type, array('onibus', 'lotacoes')))
+		if ( ! in_array($type, array('onibus', 'lotacoes', 'paradas')))
 		{
 			throw new Exception('Invalid request');
 		}
 
-		$request_uri = PoaTransporte::$facade.'?a=nc&p=%&t='.substr($type, 0, 1);
+		$type = substr($type, 0, 1);
+		if ($type === 'p')
+		{
+			$max_coords = '((-30.14296222668432,%20-51.87917968750003),%20(-29.79200328961529,%20-50.56082031250003))))';
+			$request_uri = PoaTransporte::$facade.'?a=tp&p='.$max_coords;
+		}
+		else
+		{
+			$request_uri = PoaTransporte::$facade.'?a=nc&p=%&t='.$type;
+		}
 		$request = file_get_contents($request_uri);
 		$data = json_decode($request);
+		$class = 'PoaTransporte_'.($type === 'p' ? 'Stop' : 'Unit');
 
 		foreach ($data as $key => $unit)
 		{
-			$data[$key] = new PoaTransporte_Unit($unit);
+			$data[$key] = new $class($unit);
 		}
 
 		return $data;
@@ -171,4 +195,32 @@ class PoaTransporte_Unit {
 		return $route;
 	}
 
+}
+
+class PoaTransporte_Stop {
+	
+	/**
+	 * Armazena os dados básicos da unidade de transporte
+	 */
+	private $data;
+
+	/**
+	 * Retorna o objeto que representa uma unidade de transporte.
+	 * Contém os dados básicos como nome, código, id e rota
+	 */
+	public function __construct($data)
+	{
+		$this->data = $data;
+	}
+
+	/**
+	 * Método mágico para dar acesso aos dados do objeto
+	 * @return  mixed
+	 */
+	public function __get($param)
+	{
+		$param = $this->data->{$param};
+		return is_string($param) ? trim($param) : $param;
+	}
+	
 }
