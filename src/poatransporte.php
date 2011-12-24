@@ -84,7 +84,6 @@ class PoaTransporte_Collection implements ArrayAccess, Countable, IteratorAggreg
 		{
 			$max_coords = '((-30.14296222668432,%20-51.87917968750003),%20(-29.79200328961529,%20-50.56082031250003))))';
 			$request_uri = PoaTransporte::$facade.'?a=tp&p='.$max_coords;
-			echo $request_uri;
 		}
 		else
 		{

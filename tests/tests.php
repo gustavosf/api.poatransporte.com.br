@@ -12,6 +12,7 @@ class PoaTransporteTestCase extends PHPUnit_Framework_TestCase {
 		parent::setUp();
 		$this->buses = PoaTransporte::onibus();
 		$this->lotacoes = PoaTransporte::lotacoes();
+		$this->stops = PoaTransporte::paradas();
 	}
 
 	public function testDataLoad()
@@ -51,6 +52,18 @@ class PoaTransporteTestCase extends PHPUnit_Framework_TestCase {
 		$point = array_pop($route);;
 		$this->assertObjectHasAttribute('lat', $route[0]);
 		$this->assertObjectHasAttribute('lng', $route[0]);
+	}
+
+	public function testUnitStops()
+	{
+		$this->assertGreaterThan(1, count($this->stops));
+
+		$stop = array_pop($this->stops);
+		$this->assertObjectHasAttribute('codigo', $stop);
+		$this->assertObjectHasAttribute('latitude', $stop);
+		$this->assertObjectHasAttribute('longitude', $stop);
+		$this->assertObjectHasAttribute('terminal', $stop);
+		$this->assertObjectHasAttribute('linhas', $stop);
 	}
 
 }
