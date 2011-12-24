@@ -60,20 +60,14 @@ class PoaTransporteTestCase extends PHPUnit_Framework_TestCase {
 
 	public function testUnitStops()
 	{
-		$stop = array_pop($this->stops);
+		$stop = $this->stops[0];
 
 		$this->assertNotNull(@$stop->codigo);
 		$this->assertNotNull(@$stop->latitude);
 		$this->assertNotNull(@$stop->longitude);
 		$this->assertNotNull(@$stop->terminal);
 		$this->assertNotNull(@$stop->linhas);
-		$this->assertType('array', $stop->linhas);
-
-		$this->assertObjectHasAttribute('codigo', $stop);
-		$this->assertObjectHasAttribute('latitude', $stop);
-		$this->assertObjectHasAttribute('longitude', $stop);
-		$this->assertObjectHasAttribute('terminal', $stop);
-		$this->assertObjectHasAttribute('linhas', $stop);
+		$this->assertInternalType('array', $stop->linhas);
 	}
 
 }
