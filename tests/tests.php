@@ -70,4 +70,22 @@ class PoaTransporteTestCase extends PHPUnit_Framework_TestCase {
 		$this->assertInternalType('array', $stop->linhas);
 	}
 
+	public function testCollectionExtras()
+	{
+		$stops = $this->stops;
+		$this->assertEquals($stops[0], $stops->first());
+		$this->assertEquals($stops[count($stops)-1], $stops->last());
+	}
+
+	public function testCollectionFinder()
+	{
+		$lotacoes = $this->lotacoes;
+		$this->assertEquals(1, sizeof($lotacoes->find(114660))); // wenceslau escobar
+		
+		$wenceslau = $lotacoes->find()->where('codigo', '^10.52.*')->execute();
+		$this->assertEquals(2, sizeof($wenceslau));
+
+		$wenceslau_ida = $wenceslau->find()->where('codigo', '\-1$')->execute();
+		$this->assertEquals(1, sizeof($wenceslau_ida));
+	}
 }
